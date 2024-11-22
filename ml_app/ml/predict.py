@@ -1,16 +1,31 @@
 import joblib
 from numpy.random import Generator, PCG64
-
 from ml_app.ml.train import prepare_json_data_to_prediction
 
 rng = Generator(PCG64())
 print(rng.random())
 
+# Preload the model
+
+preloaded_model = None
+
+# Load model globally
+model_singleton = None
+
+
+def get_model():
+    global model_singleton
+    if model_singleton is None:
+        model_singleton = joblib.load('ml_app/saved_models/model.pkl')
+    return model_singleton
+
+
+
 def prediction(data):
-    try:
+    # try:
 
         # Load the saved model
-        model = joblib.load('ml_app/saved_models/model.pkl')
+        model = get_model()
 
         # Preprocessing the json data
         data, feature_matrix_x = prepare_json_data_to_prediction(data)
@@ -32,8 +47,8 @@ def prediction(data):
         # Return the results
         return {"predicted_class": predicted_class}
 
-    except FileNotFoundError:
-        raise Exception("Model not found. Prediction is unavailable.")
-    except Exception as e:
-        raise Exception(f"An error occurred during prediction: {str(e)}")
+    # except FileNotFoundError:
+    #     raise Exception("Model not found. Prediction is unavailable.")
+    # except Exception as e:
+    #     raise Exception(f"An error occurred during prediction: {str(e)}")
 

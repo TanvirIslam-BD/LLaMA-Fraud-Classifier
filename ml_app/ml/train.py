@@ -13,6 +13,7 @@ from ml_app.ml.models import TrainedFeatures, TrainingHistory
 from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score, confusion_matrix, \
     classification_report, roc_curve, auc
 
+from .predict import get_model
 from .utils import preprocess_data, arf, metric, initial_train_from_csv, preprocess_data_for_prediction
 
 logger = logging.getLogger(__name__)
@@ -35,6 +36,9 @@ def train_model(data):
     # Save the model after training
     joblib.dump(arf, 'ml_app/saved_models/model.pkl')
 
+    # preload the model
+    get_model()
+
     return {"accuracy": metric.get()}
 
 
@@ -55,6 +59,9 @@ def train_model_cron(json_data):
 
     # Save the model after training
     joblib.dump(arf, 'ml_app/saved_models/model.pkl')
+
+    #preload the model
+    get_model()
 
     print(f"accuracy: {metric.get()}")
 

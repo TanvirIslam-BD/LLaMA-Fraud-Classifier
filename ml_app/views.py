@@ -13,8 +13,6 @@ import io
 from django.http import JsonResponse
 
 from .ml.models import TrainedFeatures, TrainingHistory
-from .ml.predict import prediction
-import json
 
 from .ml.train import train_model, initial_train_model
 
