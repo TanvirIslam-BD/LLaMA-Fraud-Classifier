@@ -1,0 +1,110 @@
+
+<style>
+   .current-tag {
+        display: inline-block;
+        background: #00b09b;
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        margin-left: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .current-tag:hover {
+        background: linear-gradient(135deg, #00b09b, #00b09b); /* Hover effect to reverse gradient */
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+    }
+      .back-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
+</style>
+
+
+{% extends 'layout.html' %}
+
+{% block content %}
+
+    <div class="container-training-wrapper">
+        <h1>Model Training History</h1>
+        <div id="history-container">
+            <!-- Updated table with modern styling -->
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1 Score</th>
+                        <th>Learning Rate</th>
+                        <th>Max Iter</th>
+                        <th>Max Leaf Nodes</th>
+                        <th>Min Samples Leaf</th>
+                        <th>ROC AUC</th>
+                    </tr>
+                </thead>
+                <tbody id="history-rows">
+                    <!-- Training history entries will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+        <a href="/" class="back-button">Back to Train</a>
+    </div>
+
+    <script>
+    async function fetchHistory() {
+        const response = await fetch('/ml/training-history/');
+        const history = await response.json();
+        const training_history = history.training_history
+
+        // Sort history by timestamp in descending order
+        
+        const tableBody = document.getElementById("history-rows");
+        tableBody.innerHTML = ""; // Clear existing rows
+
+        training_history.forEach((entry, index) => {
+            const row = document.createElement("tr");
+
+            // Add "Current" tag to the latest entry
+            const currentTag = index === 0 ? `<span class="current-tag">Current</span>` : "";
+
+            row.innerHTML = `
+                <td>${entry.timestamp} ${currentTag}</td>
+                <td>${(entry.accuracy * 100).toFixed(2)}%</td>
+                <td>${(entry.precision * 100).toFixed(2)}%</td>
+                <td>${(entry.recall * 100).toFixed(2)}%</td>
+                <td>${(entry.f1_score * 100).toFixed(2)}%</td>
+                <td>${entry.learning_rate}</td>
+                <td>${entry.max_iter}</td>
+                <td>${entry.max_leaf_nodes}</td>
+                <td>${entry.min_samples_leaf}</td>
+                <td>${(entry.roc_auc * 100).toFixed(2)}%</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    fetchHistory();
+</script>
+
+{% endblock %}
+
+
+
+
+
+

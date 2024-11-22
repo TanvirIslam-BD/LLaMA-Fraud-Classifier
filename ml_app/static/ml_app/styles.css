@@ -1,0 +1,358 @@
+/* static/styles.css */
+body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
+h1, h2 { color: #333; }
+form {margin: 20px;padding: 20px;background: #fff;border-radius: 5px;/* box-shadow: 0 0 10px rgba(0,0,0,0.1); */}
+label { display: block; margin-bottom: 5px; }
+input[type="file"], select, textarea, button { width: 100%; padding: 10px; margin-bottom: 10px; }
+button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+button:hover { background-color: #218838; }
+pre { background: #e9ecef; padding: 10px; border-radius: 5px; }
+.error { color: red; }
+
+/* Basic reset */
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fa;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.8em;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    font-size: 16px;
+}
+
+.history-table thead {
+    background-color: #007b8f;
+    color: #ffffff;
+    font-size: 12px;
+}
+
+.history-table th,
+.history-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.history-table tbody tr {
+    transition: background-color 0.3s;
+}
+
+.history-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.history-table tbody tr:hover {
+    background-color: #eaf3ff;
+}
+
+.history-table th {
+    font-weight: 600;
+}
+
+.history-table td {
+    color: #555;
+}
+
+/* Rounded corners for first and last cells in header */
+.history-table thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.history-table thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+/* Optional subtle 3D effect on header */
+.history-table thead th {
+    box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.3);
+}
+
+span.select2.select2-container.select2-container--default {
+    width: 100% !important;
+}
+
+.select-features-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+
+    .section-summary-info {
+        display: flex;
+    }
+
+    .section-summary-info div {
+        margin-right: 20px;
+        width: 100%;
+    }
+
+    .upload-icon {
+        font-size: 30px; /* Adjust size as needed */
+        vertical-align: middle; /* Aligns with text */
+        margin-right: 10px; /* Space between icon and text */
+    }
+
+    .file-upload {
+        margin: 20px 0;
+    }
+
+    .file-upload-label {
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .model-hyperparameters {
+        display: flex;
+    }
+
+    .model-hyperparameters .form-group {
+        margin-right: 10px;
+    }
+
+    .custom-file-upload {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        padding: 10px;
+        border: 1px dashed #6c757d;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .custom-file-upload:hover {
+        border-color: #212529;
+        background-color: #f1f1f1;
+    }
+
+    .custom-file-upload input[type="file"] {
+        display: none;
+    }
+
+    .upload-icon {
+        font-size: 30px;
+    }
+
+    .upload-text {
+        margin-left: 10px;
+        font-size: 16px;
+        color: #555;
+    }
+
+    .file-upload-info {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .summary {
+        margin-top: 20px;
+    }
+
+    .summary table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .summary th, .summary td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+        font-size: 12px;
+    }
+
+    .summary th {
+        background-color: #6c757d;
+        color: white;
+        font-size: 11px;
+    }
+
+
+    h1, h2, h3 {
+        font-family: 'Arial', sans-serif;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .multi-select {
+        height: 150px;
+        overflow-y: auto;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    /* Loader styling */
+    .loader {
+        display: none; /* Changed from none to flex for initial testing */
+        align-items: center; /* Center content vertically */
+        justify-content: center; /* Center content horizontally */
+        position: fixed; /* Fixed position for full screen overlay */
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        background: rgba(173, 173, 173, 0.8); /* Semi-transparent background */
+        text-align: center;
+    }
+
+    .loader .spinner {
+        width: 50px;
+        height: 50px;
+        border: 8px solid #f3f3f3; /* Light grey */
+        border-top: 8px solid #3498db; /* Blue */
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .loader p {
+        margin-top: 15px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+
+
+    .select2-container--default .select2-selection--multiple {
+        background-color: #fafafa;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 6px;
+        font-size: 16px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Styling each selected option tag */
+    .select2-container--default .select2-selection__choice {
+        background-color: #4f46e5; /* Modern blue color */
+        color: #212529; /* White text */
+        border-radius: 16px; /* Rounded pill shape */
+        padding: 5px 12px;
+        margin: 4px 4px 0 0;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+    }
+
+    /* Styling for the remove 'x' icon inside the tag */
+    .select2-container--default .select2-selection__choice__remove {
+        color: #ffffff;
+        font-weight: bold;
+        margin-right: 6px;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .select2-container--default .select2-selection__choice__remove:hover {
+        color: #ff8a80;
+    }
+
+
+    .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+        color: #9ca3af;
+    }
+
+
+    .select2-container--default .select2-results__option {
+        padding: 10px;
+        font-size: 15px;
+        color: #333;
+        background-color: #fff;
+    }
+
+
+    .select2-container--default .select2-results__option--highlighted {
+        background-color: #4f46e5;
+        color: #fff;
+        font-weight: 600;
+    }
+
+
+    .select2-container--default .select2-selection--multiple:hover {
+        border-color: #6366f1;
+        background-color: #f9fafb;
+    }
+
+    .separator-decorative {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 20px 0;
+        color: #666;
+    }
+
+    .separator-decorative::before,
+    .separator-decorative::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #ddd; /* Line on each side */
+    }
+
+    .separator-decorative:not(:empty)::before {
+        margin-right: .75em;
+    }
+
+    .separator-decorative:not(:empty)::after {
+        margin-left: .75em;
+    }
+
+    .section-summary-info {
+        margin-top: 20px;
+    }

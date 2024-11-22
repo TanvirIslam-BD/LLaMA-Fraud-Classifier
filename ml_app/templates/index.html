@@ -1,0 +1,190 @@
+
+{% extends 'layout.html' %}
+
+{% block content %}
+    
+<div class="container-wrapper">
+    <h1 style="text-align: center"> EventBooking Order Classification Model</h1>
+    <form id="trainForm" method="post" action="/ml/retrain/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group file-upload">
+            <label for="file" class="file-upload-label">Upload Dataset (CSV)</label>
+            <div class="custom-file-upload" onclick="document.getElementById('file').click();">
+                <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+                <span class="upload-icon"><i class="fas fa-file-csv"></i></span>
+                <span class="upload-text">Choose a file</span>
+            </div>
+            <p class="file-upload-info">Please upload a CSV file only.</p>
+        </div>
+        
+        <div class="section-summary">
+            <div id="head" class="summary"></div>
+            <div class="section-summary-info">
+                    <div id="info" class="info"></div>
+                    <div id="missing_values" class="missing_values"></div>
+                    <div id="unique_values" class="unique_values"></div>
+                </div>
+        </div>
+
+        <div class="separator-decorative">
+             <span>Select Label column</span>
+        </div>
+        
+        <div class="form-group mt-2" id="label-column-selection" style="display: none;">
+            <label for="labelColumn">Label Column:</label>
+            <select name="labelColumn" id="labelColumn" class="form-control"></select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-4"><i class="fas fa-play"></i>Train Model</button>
+
+    </form>
+
+    <div class="loader">
+        <div class="spinner"></div>
+    </div>
+
+</div>
+
+<script>
+
+     // Function to get CSRF token from Django
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Set up CSRF token in AJAX requests
+    const csrftoken = getCookie('csrftoken');
+    $('#trainForm').on('submit', function(event) {
+        $('.loader').css("display", "flex"); // Show loader
+    });
+
+     // Function to populate the selection fields with column names
+        function populateFields(columns) {
+            const categoricalSelect = document.getElementById('categoricalFields');
+            const dateSelect = document.getElementById('dateFields');
+            const numericSelect = document.getElementById('numericFields');
+
+            columns.forEach(column => {
+                const option = document.createElement('option');
+                option.value = column;
+                option.textContent = column;
+
+                // // Add to the appropriate select based on its type
+                // if (/* condition to check if column is categorical */) {
+                    categoricalSelect.appendChild(option.cloneNode(true));
+                // } else if (/* condition to check if column is date */) {
+                    dateSelect.appendChild(option.cloneNode(true));
+                // } else if (/* condition to check if column is numeric */) {
+                    numericSelect.appendChild(option.cloneNode(true));
+                // }
+            });
+             // Refresh Select2 to show new options
+            $(categoricalSelect).trigger('change');
+            $(dateSelect).trigger('change');
+            $(numericSelect).trigger('change');
+
+        }
+    
+    
+    document.getElementById('file').addEventListener('change', async function (event) {
+        const file = event.target.files[0];
+        const fileName = file ? file.name : "No file chosen";
+        $('.upload-text').textContent = fileName;
+        if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const response = await fetch('/ml/data_set_info/', {
+                    method: 'POST',
+                    headers: { "X-CSRFToken": csrftoken },
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.getElementById('head').innerHTML = `<h5>First Few Rows</h5>${data.head}`;
+                    document.getElementById('info').innerHTML = `<h5>Data Info</h5><pre>${data.info}</pre>`;
+                    document.getElementById('missing_values').innerHTML = `<h5>Missing Values</h5><pre>${JSON.stringify(data.missing_values, null, 2)}</pre>`;
+                    document.getElementById('unique_values').innerHTML = `<h5>Unique Values</h5><pre>${JSON.stringify(data.unique_values, null, 2)}</pre>`;
+
+                    populateLabelColumn(data.column_names);
+                    $('.loader').css("display", "none"); 
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing the CSV file.');
+            }
+        }
+    });
+
+    function parseCSV(contents) {
+        const rows = contents.split('\n').map(row => row.split(','));
+        const headers = rows[0];
+        const data = rows.slice(1).map(row => {
+            return headers.reduce((obj, header, index) => {
+                obj[header.trim()] = row[index] ? row[index].trim() : '';
+                return obj;
+            }, {});
+        });
+
+        return { headers, data };
+    }
+
+    function displaySummary(data) {
+        const summaryDiv = document.getElementById('summary');
+        summaryDiv.innerHTML = ''; // Clear previous summary
+
+        // Create summary content
+        const headerHTML = `<h5>Dataset Summary</h5><p>Total Rows: ${data.data.length}</p>`;
+        let tableHTML = '<table><tr>';
+
+        // Create table headers
+        data.headers.forEach(header => {
+            tableHTML += `<th>${header}</th>`;
+        });
+        tableHTML += '</tr>';
+
+        // Create table rows (first few for preview)
+        const previewRows = data.data.slice(0, 5);
+        previewRows.forEach(row => {
+            tableHTML += '<tr>';
+            data.headers.forEach(header => {
+                tableHTML += `<td>${row[header.trim()]}</td>`;
+            });
+            tableHTML += '</tr>';
+        });
+        tableHTML += '</table>';
+
+        summaryDiv.innerHTML = headerHTML + tableHTML;
+    }
+
+    function populateLabelColumn(headers) {
+        const labelSelect = document.getElementById('labelColumn');
+        labelSelect.innerHTML = ''; // Clear previous options
+        headers.forEach(header => {
+            const option = document.createElement('option');
+            option.value = header;
+            option.textContent = header;
+            labelSelect.appendChild(option);
+        });
+
+        // Show the label column selection
+        document.getElementById('label-column-selection').style.display = 'block';
+    }
+
+</script>
+
+
+{% endblock %}
