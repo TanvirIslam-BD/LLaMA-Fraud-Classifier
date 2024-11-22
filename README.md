@@ -54,3 +54,6 @@ Contributions are welcome! Feel free to open issues or submit pull requests to i
 This project is licensed under the [MIT License](LICENSE).
 
 ---
+
+celery -A django_ml_app beat --loglevel=debug
+

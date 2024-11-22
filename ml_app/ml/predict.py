@@ -1,7 +1,7 @@
 import joblib
 from numpy.random import Generator, PCG64
 
-from ml_app.ml.train import prepare_data_from_json, prepare_json_data_to_prediction
+from ml_app.ml.train import prepare_json_data_to_prediction
 
 rng = Generator(PCG64())
 print(rng.random())

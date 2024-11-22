@@ -56,6 +56,8 @@ def train_model_cron(json_data):
     # Save the model after training
     joblib.dump(arf, 'ml_app/saved_models/model.pkl')
 
+    print(f"accuracy: {metric.get()}")
+
     return {"accuracy": metric.get()}
 
 
@@ -142,7 +144,7 @@ def load_and_prepare_data(data: dict):
 
 def prepare_data_from_json(data: dict):
     data, feature_matrix_x, target_vector_y = preprocess_data(data)
-    return  feature_matrix_x, target_vector_y
+    return  data, feature_matrix_x, target_vector_y
 
 def prepare_json_data_to_prediction(data: dict):
     data, feature_matrix_x = preprocess_data_for_prediction(data)
