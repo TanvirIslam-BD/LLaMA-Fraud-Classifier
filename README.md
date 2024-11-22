@@ -1,4 +1,4 @@
-# Fake Order Detector
+# Order Classification with LLaMA And HoeffdingTreeClassifier Model Combinedly
 
 A hybrid machine learning project designed to detect fake orders by combining the power of natural language processing (NLP) and incremental learning. This project uses Hugging Face's LLaMA model for text feature extraction and HoeffdingTreeClassifier for real-time classification of orders.
 
@@ -24,7 +24,7 @@ A hybrid machine learning project designed to detect fake orders by combining th
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/TanvirIslam-BD/fake-order-detector.git
-   cd fake-order-detector
+   
    ```
 
 2. **Install Dependencies**:
@@ -45,6 +45,12 @@ A hybrid machine learning project designed to detect fake orders by combining th
    python predict.py --input sample_order.csv
    ```
 
+
+## To Startup cron
+```
+celery -A django_ml_app beat --loglevel=debug
+```
+
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests to improve the project.
@@ -53,7 +59,4 @@ Contributions are welcome! Feel free to open issues or submit pull requests to i
 
 This project is licensed under the [MIT License](LICENSE).
 
----
-
-celery -A django_ml_app beat --loglevel=debug
 
