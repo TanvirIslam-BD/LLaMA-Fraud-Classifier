@@ -13,6 +13,8 @@ from ml_app.ml.models import TrainedFeatures, TrainingHistory
 from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score, confusion_matrix, \
     classification_report, roc_curve, auc
 
+from .utils import preprocess_data, arf, metric, initial_train_from_csv, preprocess_data_for_prediction
+
 logger = logging.getLogger(__name__)
 
 MODEL_FILE_PATH = os.path.join(settings.BASE_DIR, 'ml_app', 'saved_models', 'model.pkl')
@@ -21,19 +23,46 @@ TRAINING_DATA_PATH = os.path.join(settings.BASE_DIR, 'ml_app', 'data', 'training
 
 def train_model(data):
 
-    #extract labelColumn
-    label_column = data['labelColumn'].strip()
-    file_path = data['file_path']
-
     data, feature_matrix_x, target_vector_y = load_and_prepare_data(data)
 
-    model, target_vector_y_test, feature_matrix_x_test, best_tune_params = initiate_model_training(feature_matrix_x, target_vector_y)
+    for i in range(len(feature_matrix_x)):
+        X_sample_dict = {f"feature_{j}": feature_matrix_x[i][j] for j in range(len(feature_matrix_x[i]))}
+        y_sample = target_vector_y[i]
+        y_pred = arf.predict_one(X_sample_dict)
+        metric.update(y_sample, y_pred)
+        arf.learn_one(X_sample_dict, y_sample)
 
-    performance_metrics = calculate_model_performance(feature_matrix_x_test, target_vector_y_test, model)
+    # Save the model after training
+    joblib.dump(arf, 'ml_app/saved_models/model.pkl')
 
-    save_training_data(performance_metrics, best_tune_params)
+    return {"accuracy": metric.get()}
 
-    return performance_metrics
+
+def train_model_cron(json_data):
+
+    print("------train_model_cron----------")
+    print(json_data)
+    df = pd.DataFrame(json_data)
+
+    data, feature_matrix_x, target_vector_y = prepare_data_from_json(df)
+
+    for i in range(len(feature_matrix_x)):
+        X_sample_dict = {f"feature_{j}": feature_matrix_x[i][j] for j in range(len(feature_matrix_x[i]))}
+        y_sample = target_vector_y[i]
+        y_pred = arf.predict_one(X_sample_dict)
+        metric.update(y_sample, y_pred)
+        arf.learn_one(X_sample_dict, y_sample)
+
+    # Save the model after training
+    joblib.dump(arf, 'ml_app/saved_models/model.pkl')
+
+    return {"accuracy": metric.get()}
+
+
+def initial_train_model(data):
+    csv_file = data['file_path']
+    return initial_train_from_csv(csv_file, arf)
+
 
 
 
@@ -98,7 +127,6 @@ def calculate_permutation_importance(model, X_test, y_test):
 
 def load_and_prepare_data(data: dict):
 
-    label_column = data['labelColumn'].strip()
     file_path = data['file_path']
 
     try:
@@ -108,29 +136,17 @@ def load_and_prepare_data(data: dict):
     except pd.errors.EmptyDataError:
         raise ValueError("The file is empty or invalid format.")
 
+    data, feature_matrix_x, target_vector_y = preprocess_data(data)
 
-    missing_columns = [col for col in CATEGORICAL_FEATURES + NUMERIC_FEATURES + [label_column] if
-                       col not in data.columns]
-    if missing_columns:
-        raise ValueError(f"Missing columns in data: {missing_columns}")
+    return  data, feature_matrix_x, target_vector_y
 
-    try:
-        numeric_features = NUMERIC_FEATURES + DATE_FEATURES
-    except NameError:
-        raise ValueError("DATE_FEATURES is not defined in the current scope.")
+def prepare_data_from_json(data: dict):
+    data, feature_matrix_x, target_vector_y = preprocess_data(data)
+    return  feature_matrix_x, target_vector_y
 
-    # Preprocess price data
-    clean_price_data(data)
-
-    save_last_trained_features(CATEGORICAL_FEATURES, numeric_features, DATE_FEATURES)
-
-    # Preprocess feature from date column
-    data_frame = extract_datetime_features(data)
-
-    feature_matrix_x = data_frame.drop(columns=[label_column])
-    target_vector_y = data_frame[label_column]
-
-    return data, feature_matrix_x, target_vector_y
+def prepare_json_data_to_prediction(data: dict):
+    data, feature_matrix_x = preprocess_data_for_prediction(data)
+    return  data, feature_matrix_x
 
 
 def clean_price_value(value):

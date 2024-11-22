@@ -20,7 +20,7 @@ class PredictAPIView(APIView):
             result = prediction(data_df)  # Calls the function from `predict.py`
 
             # Return the prediction result
-            return Response({"prediction": result.tolist()}, status=status.HTTP_200_OK)
+            return Response(result, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

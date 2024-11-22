@@ -14,8 +14,9 @@ from django.http import JsonResponse
 
 from .ml.models import TrainedFeatures, TrainingHistory
 from .ml.predict import prediction
-from .ml.retrain import retrain_model
 import json
+
+from .ml.train import train_model, initial_train_model
 
 
 def index(request):
@@ -38,7 +39,33 @@ def retrain(request):
         data["file_path"] = file_path
 
         # Call the retrain function with the data
-        result = retrain_model(data)
+        result = train_model(data)
+
+        # Optionally, remove the uploaded file after processing
+        os.remove(file_path)
+
+        return JsonResponse(result)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+def train(request):
+    if request.method == "POST":
+        data = request.POST.dict()  # Collect form data from POST
+        data_set_file = request.FILES.get('file')
+
+        if not data_set_file:
+            return JsonResponse({"error": "No file uploaded"}, status=400)
+
+        # Save the file to the 'uploads' directory
+        fs = FileSystemStorage(location='uploads/')
+        file_name = fs.save(data_set_file.name, data_set_file)
+        file_path = fs.path(file_name)
+
+        # Add the file path to the data dictionary
+        data["file_path"] = file_path
+
+        # Call the retrain function with the data
+        result = initial_train_model(data)
 
         # Optionally, remove the uploaded file after processing
         os.remove(file_path)

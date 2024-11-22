@@ -3,7 +3,8 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'your_secret_key'
+SECRET_KEY = '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'
+HUGGINGFACE = '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'
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -14,7 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_celery_beat', # For scheduling
+    'django_celery_beat',
     'ml_app',
     'rest_framework',
     'rest_framework_simplejwt',
@@ -27,8 +28,20 @@ DATABASES = {
     }
 }
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+# Celery Settings
+CELERY_TASK_ALWAYS_EAGER = True  # Execute tasks synchronously
+CELERY_TASK_EAGER_PROPAGATES = True  # Raise exceptions in tasks
+CELERY_BROKER_URL = 'memory://'
+CELERY_RESULT_BACKEND = 'cache+memory://'
+# CELERY_TIMEZONE = 'UTC'
+# CELERY_ENABLE_UTC = True
+
+# CELERY_BROKER_URL = 'redis://localhost:8000//0'  # Redis broker URL
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+
+# Celery Beat Scheduler Settings
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 
 # Add MIDDLEWARE settings
 MIDDLEWARE = [

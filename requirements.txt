@@ -3,5 +3,12 @@ scikit-learn==1.5.2
 pandas==2.2.3
 joblib==1.4.2
 celery==5.4.0
+transformers==4.46.2
+django-cors-headers==4.6.0
+torch==2.5.1
+river==0.21.2
 django-celery-beat==2.7.0
+redis
 rest_framework_simplejwt
+django-celery-beat
+django-celery-results
