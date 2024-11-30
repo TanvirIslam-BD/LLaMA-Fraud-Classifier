@@ -57,12 +57,17 @@ from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
 
 def preprocess_data(df):
+
+    # Ensure Date column is in proper format
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+    df = df.dropna(subset=["Date"])  # Drop rows with invalid dates
+
     # Generate text embeddings
     text_features = (df["Customer"] + " " + df["Organisation"] + " " + df["Event"])
     text_embeddings = generate_text_embeddings(text_features.tolist())
     text_embeddings = np.array(text_embeddings)
     if text_embeddings.ndim == 1:
-        text_embeddings = text_embeddings.reshape(-1, 1)  # Ensure 2D
+        text_embeddings = text_embeddings.reshape(-1, text_embeddings.shape[1])  # Ensure 2D
 
     # Extract numerical features
     numerical_features = df[["Amount", "Tickets", "Service Charge", "Coupon amount"]].to_numpy()
@@ -72,20 +77,28 @@ def preprocess_data(df):
 
     # One-hot encode categorical features
     categorical_features = df[["Booking type", "Status", "Processor", "Currency"]]
-    encoder = OneHotEncoder(sparse_output=False)
+    encoder = OneHotEncoder(sparse_output=False, handle_unknown="ignore")
     categorical_encoded = encoder.fit_transform(categorical_features)
     categorical_encoded = np.array(categorical_encoded)
     if categorical_encoded.ndim == 1:
         categorical_encoded = categorical_encoded.reshape(-1, 1)  # Ensure 2D
 
+    # Save the encoder for use in prediction
+    joblib.dump(encoder, "ml_app/saved_encoder/encoder.pkl")
+
     # Extract temporal features
-    df["Date"] = pd.to_datetime(df["Date"])
     temporal_features = df["Date"].apply(
         lambda x: [x.year, x.month, x.day, x.dayofweek, x.hour, x.minute]
     ).tolist()
     temporal_features = np.array(temporal_features)
     if temporal_features.ndim == 1:
         temporal_features = temporal_features.reshape(-1, 1)  # Ensure 2D
+
+    # Debugging shapes
+    print(f"Text Embeddings Shape: {text_embeddings.shape}")
+    print(f"Numerical Features Shape: {numerical_features.shape}")
+    print(f"Categorical Encoded Shape: {categorical_encoded.shape}")
+    print(f"Temporal Features Shape: {temporal_features.shape}")
 
     # Ensure all arrays have consistent row counts
     min_rows = min(
@@ -112,6 +125,10 @@ def preprocess_data(df):
 
 
 def preprocess_data_for_prediction(df):
+
+    # Load preprocessing artifacts
+    encoder = joblib.load("ml_app/saved_encoder/encoder.pkl")  # Load saved encoder
+
     # Text Features
     text_features = (df["Customer"] + " " + df["Organisation"] + " " + df["Event"])
     text_embeddings = generate_text_embeddings(text_features.tolist())
@@ -127,14 +144,11 @@ def preprocess_data_for_prediction(df):
 
     # Categorical Features
     categorical_features = df[["Booking type", "Status", "Processor", "Currency"]]
-    encoder = OneHotEncoder(sparse_output=False)
-    categorical_encoded = encoder.fit_transform(categorical_features)
-    categorical_encoded = np.array(categorical_encoded)
-    if categorical_encoded.ndim == 1:
-        categorical_encoded = categorical_encoded.reshape(-1, 1)
+    categorical_encoded = encoder.transform(categorical_features)
 
     # Temporal Features
-    df["Date"] = pd.to_datetime(df["Date"])
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+    df = df.dropna(subset=["Date"])  # Handle missing or invalid dates
     temporal_features = df["Date"].apply(
         lambda x: [x.year, x.month, x.day, x.dayofweek, x.hour, x.minute]
     ).tolist()
