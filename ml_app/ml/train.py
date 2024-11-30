@@ -13,8 +13,7 @@ from ml_app.ml.models import TrainedFeatures, TrainingHistory
 from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, f1_score, confusion_matrix, \
     classification_report, roc_curve, auc
 
-from .predict import get_model
-from .utils import preprocess_data, arf, metric, initial_train_from_csv, preprocess_data_for_prediction
+from .utils import preprocess_data, arf, metric, initial_train_from_csv, preprocess_data_for_prediction, get_model
 
 logger = logging.getLogger(__name__)
 

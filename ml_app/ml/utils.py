@@ -1,6 +1,7 @@
 import os
 import pickle
 
+import joblib
 import pandas as pd
 import numpy as np
 from river.tree import HoeffdingTreeClassifier
@@ -28,6 +29,22 @@ arf = LeveragingBaggingClassifier(
 )
 
 metric = Accuracy()
+
+# Preload the model
+
+preloaded_model = None
+
+# Load model globally
+model_singleton = None
+
+
+def get_model():
+    global model_singleton
+    if model_singleton is None:
+        model_singleton = joblib.load('ml_app/saved_models/model.pkl')
+    return model_singleton
+
+
 
 def generate_text_embeddings(texts):
     inputs = tokenizer(texts, return_tensors="pt", padding=True, truncation=True)

@@ -1,24 +1,10 @@
 import joblib
 from numpy.random import Generator, PCG64
 from ml_app.ml.train import prepare_json_data_to_prediction
+from ml_app.ml.utils import get_model
 
 rng = Generator(PCG64())
 print(rng.random())
-
-# Preload the model
-
-preloaded_model = None
-
-# Load model globally
-model_singleton = None
-
-
-def get_model():
-    global model_singleton
-    if model_singleton is None:
-        model_singleton = joblib.load('ml_app/saved_models/model.pkl')
-    return model_singleton
-
 
 
 def prediction(data):
@@ -32,9 +18,10 @@ def prediction(data):
 
         # Check if it's a River model or a Pipeline
         if hasattr(model, 'predict_one'):
-            # Use River's incremental learning method
-            predicted_class = model.predict_one(data)
-            probabilities = model.predict_proba_one(data)
+            # Transform feature matrix into a dictionary for River models
+            feature_dict = {f"feature_{i}": value for i, value in enumerate(feature_matrix_x.flatten())}
+            predicted_class = model.predict_one(feature_dict)
+            probabilities = model.predict_proba_one(feature_dict)
         elif hasattr(model, 'predict'):
             # Use Scikit-learn or general Pipeline method
             # Ensure `data` is transformed appropriately for batch input
