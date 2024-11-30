@@ -8,8 +8,8 @@ print(rng.random())
 
 
 def prediction(data):
-    # try:
 
+    try:
         # Load the saved model
         model = get_model()
 
@@ -24,18 +24,18 @@ def prediction(data):
             probabilities = model.predict_proba_one(feature_dict)
         elif hasattr(model, 'predict'):
             # Use Scikit-learn or general Pipeline method
-            # Ensure `data` is transformed appropriately for batch input
-            data = [list(data.values())]  # Convert dict to a list of values
-            predicted_class = model.predict(data)[0]
-            probabilities = model.predict_proba(data)[0]
+            predicted_class = model.predict(feature_matrix_x)[0]
+            probabilities = model.predict_proba(feature_matrix_x)[0]
         else:
             raise Exception("Unknown model type: Prediction method not found.")
 
         # Return the results
+        print("probabilities:")
+        print(probabilities)
         return {"predicted_class": predicted_class}
 
-    # except FileNotFoundError:
-    #     raise Exception("Model not found. Prediction is unavailable.")
-    # except Exception as e:
-    #     raise Exception(f"An error occurred during prediction: {str(e)}")
+    except FileNotFoundError:
+        raise Exception("Model not found. Prediction is unavailable.")
+    except Exception as e:
+        raise Exception(f"An error occurred during prediction: {str(e)}")
 
