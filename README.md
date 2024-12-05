@@ -1,4 +1,4 @@
-# Order Classification with LLaMA And HoeffdingTreeClassifier Model Combinedly
+# Order Classification with Sentence Embeddings and all-MiniLM-L6-v2 And HoeffdingTreeClassifier Model Combinedly
 
 A hybrid machine learning project designed to detect fake orders by combining the power of natural language processing (NLP) and incremental learning. This project uses Hugging Face's LLaMA model for text feature extraction and HoeffdingTreeClassifier for real-time classification of orders.
 
