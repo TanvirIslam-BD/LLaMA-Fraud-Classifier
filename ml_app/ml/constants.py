@@ -5,9 +5,9 @@ from typing import List
 from django.contrib import admin
 
 # Customize the admin title
-admin.site.site_header = "My Custom Admin Panel"
-admin.site.site_title = "My Admin Portal"
-admin.site.index_title = "Welcome to the Custom Admin Dashboard"
+admin.site.site_header = "EB AI Admin Panel"
+admin.site.site_title = "EB AI Admin Panel"
+admin.site.index_title = "Welcome to the EB AI Admin Dashboard"
 
 
 UPLOAD_FOLDER = 'uploads'
