@@ -48,7 +48,8 @@ A hybrid machine learning project designed to detect fake orders by combining th
 
 ## To Startup cron
 ```
-celery -A django_ml_app beat --loglevel=debug
+ celery -A django_ml_app beat --loglevel=debug
+
 ```
 
 ## Contributing

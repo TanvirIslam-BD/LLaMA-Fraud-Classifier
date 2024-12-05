@@ -32,7 +32,12 @@ def prediction(data):
         # Return the results
         print("probabilities:")
         print(probabilities)
-        return {"predicted_class": predicted_class}
+
+        human_readable_prediction = "Genuine(1)" if predicted_class == 1 else "Not Genuine(0)"
+        probabilities_percentage = {key: f"{round(value * 100, 2)}%" for key, value in probabilities.items()}
+        probabilities_percentage = probabilities_percentage[1] if predicted_class == 1 else probabilities_percentage[0]
+
+        return {"prediction": human_readable_prediction, "probability": probabilities_percentage}
 
     except FileNotFoundError:
         raise Exception("Model not found. Prediction is unavailable.")
