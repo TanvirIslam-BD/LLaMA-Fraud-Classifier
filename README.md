@@ -26,6 +26,16 @@ A hybrid machine learning project designed to detect fake orders by combining th
    git clone https://github.com/TanvirIslam-BD/fake-order-detector.git
    
    ```
+   
+python -m venv .venv
+
+.venv\Scripts\activate
+
+pip install djangorestframework
+
+pip install djangorestframework-simplejwt
+
+
 
 2. **Install Dependencies**:
    ```bash

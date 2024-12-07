@@ -46,6 +46,6 @@ def auto_learning_task():
 
         # Process each JSON object for incremental learning
         # Commented out for now to prevent model overfitting and instability.
-        # train_model_cron(json_data)
+        train_model_cron(json_data)
     except Exception as e:
         print(f"Error in IncrementalLearningCronJob: {str(e)}")
